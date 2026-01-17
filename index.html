@@ -636,13 +636,12 @@ Your-Folder/
             const m = (os === 'windows') ? `../models/ggml-${modelName}.bin` : `models/ggml-${modelName}.bin`;
 
             const l = language.value || 'en';
-            const q = queue.value || '3';
+            const q = queue.value || '30';
             const o = outputPath.value || 'output.srt';
 
             // Constructing the command
             // Input file is now double-quoted as requested.
-            const strictCommand = `./ffmpeg -i "${i}" -vn -af
-    "whisper=model=${m}:language=${l}:queue=${q}:destination=${o}:format=srt" -f null -`;
+            const strictCommand = `./ffmpeg -i "${i}" -vn -af "whisper=model=${m}:language=${l}:queue=${q}:destination=${o}:format=srt" -f null -`;
 
             commandOutput.textContent = strictCommand;
         }
