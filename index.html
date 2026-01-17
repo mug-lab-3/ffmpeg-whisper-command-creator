@@ -443,10 +443,39 @@
         <div class="form-group">
             <label for="modelPath" data-i18n="label-model">Model</label>
             <select id="modelPath">
-                <option value="large-v3">large-v3</option>
-                <option value="large-v3-turbo">large-v3-turbo</option>
-                <option value="medium">medium</option>
-                <option value="small">small</option>
+                <option value="ggml-large-v3.bin">ggml-large-v3.bin</option>
+                <option value="ggml-large-v3-turbo.bin">ggml-large-v3-turbo.bin</option>
+                <option value="ggml-medium.bin">ggml-medium.bin</option>
+                <option value="ggml-small.bin">ggml-small.bin</option>
+                <option value="ggml-base.bin">ggml-base.bin</option>
+                <option value="ggml-base-q5_1.bin">ggml-base-q5_1.bin</option>
+                <option value="ggml-base-q8_0.bin">ggml-base-q8_0.bin</option>
+                <option value="ggml-base.en-q5_1.bin">ggml-base.en-q5_1.bin</option>
+                <option value="ggml-base.en-q8_0.bin">ggml-base.en-q8_0.bin</option>
+                <option value="ggml-base.en.bin">ggml-base.en.bin</option>
+                <option value="ggml-large-v1.bin">ggml-large-v1.bin</option>
+                <option value="ggml-large-v2-q5_0.bin">ggml-large-v2-q5_0.bin</option>
+                <option value="ggml-large-v2-q8_0.bin">ggml-large-v2-q8_0.bin</option>
+                <option value="ggml-large-v2.bin">ggml-large-v2.bin</option>
+                <option value="ggml-large-v3-q5_0.bin">ggml-large-v3-q5_0.bin</option>
+                <option value="ggml-large-v3-turbo-q5_0.bin">ggml-large-v3-turbo-q5_0.bin</option>
+                <option value="ggml-large-v3-turbo-q8_0.bin">ggml-large-v3-turbo-q8_0.bin</option>
+                <option value="ggml-medium-q5_0.bin">ggml-medium-q5_0.bin</option>
+                <option value="ggml-medium-q8_0.bin">ggml-medium-q8_0.bin</option>
+                <option value="ggml-medium.en-q5_0.bin">ggml-medium.en-q5_0.bin</option>
+                <option value="ggml-medium.en-q8_0.bin">ggml-medium.en-q8_0.bin</option>
+                <option value="ggml-medium.en.bin">ggml-medium.en.bin</option>
+                <option value="ggml-small-q5_1.bin">ggml-small-q5_1.bin</option>
+                <option value="ggml-small-q8_0.bin">ggml-small-q8_0.bin</option>
+                <option value="ggml-small.en-q5_1.bin">ggml-small.en-q5_1.bin</option>
+                <option value="ggml-small.en-q8_0.bin">ggml-small.en-q8_0.bin</option>
+                <option value="ggml-small.en.bin">ggml-small.en.bin</option>
+                <option value="ggml-tiny-q5_1.bin">ggml-tiny-q5_1.bin</option>
+                <option value="ggml-tiny-q8_0.bin">ggml-tiny-q8_0.bin</option>
+                <option value="ggml-tiny.bin">ggml-tiny.bin</option>
+                <option value="ggml-tiny.en-q5_1.bin">ggml-tiny.en-q5_1.bin</option>
+                <option value="ggml-tiny.en-q8_0.bin">ggml-tiny.en-q8_0.bin</option>
+                <option value="ggml-tiny.en.bin">ggml-tiny.en.bin</option>
             </select>
             <div class="collapsible-header expanded" onclick="toggleCollapse(this)">
                 <strong data-i18n="help-setup-title">Setup Required</strong>
@@ -660,20 +689,20 @@ Your-Folder/
             const os = document.querySelector('input[name="os"]:checked').value;
             toggleHelp(os);
 
-            const modelName = modelPath.value || 'large-v3';
+            const modelFilename = modelPath.value || 'ggml-large-v3.bin';
             // Adjusted path logic based on OS
-            const m = (os === 'windows') ? `../models/ggml-${modelName}.bin` : `models/ggml-${modelName}.bin`;
+            const m = (os === 'windows') ? `../models/${modelFilename}` : `models/${modelFilename}`;
 
             const l = language.value || 'en';
             const q = queue.value || '30';
             const o = outputPath.value || (os === 'windows' ? '../output.srt' : 'output.srt');
 
             // Constructing the command
-            // Input file is now double-quoted as requested.
-            const strictCommand = `./ffmpeg -i "${i}" -vn -af "whisper=model=${m}:language=${l}:queue=${q}:destination=${o}:format=srt" -f null -`;
+            const strictCommand = `./ffmpeg -itsoffset 01:00:00 -i "${i}" -vn -af "whisper=model=${m}:language=${l}:queue=${q}:destination=${o}:format=srt" -f null -`;
 
             commandOutput.textContent = strictCommand;
         }
+
 
         // Add event listeners
         [inputPath, modelPath, language, queue, outputPath].forEach(el => {
