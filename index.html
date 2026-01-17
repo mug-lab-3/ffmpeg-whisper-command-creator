@@ -27,6 +27,30 @@
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
+            /* Scrollbar styling for Firefox */
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--input-bg);
+        }
+
+        /* Scrollbar styling for Chrome, Edge, and Safari */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--input-bg);
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 20px;
+            border: 3px solid var(--input-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a370f7;
         }
 
         .container {
@@ -490,7 +514,7 @@ Your-Folder/
             </div>
             <div class="form-group">
                 <label for="queue" data-i18n="label-queue">Queue</label>
-                <input type="number" id="queue" value="3" min="1">
+                <input type="number" id="queue" value="30" min="1">
             </div>
         </div>
 
@@ -609,6 +633,11 @@ Your-Folder/
         if (navigator.userAgent.toLowerCase().includes('mac')) {
             document.querySelector('input[name="os"][value="mac"]').checked = true;
             toggleHelp('mac');
+            outputPath.value = 'output.srt';
+        } else {
+            document.querySelector('input[name="os"][value="windows"]').checked = true;
+            toggleHelp('windows');
+            outputPath.value = '../output.srt';
         }
 
         function toggleHelp(os) {
@@ -637,7 +666,7 @@ Your-Folder/
 
             const l = language.value || 'en';
             const q = queue.value || '30';
-            const o = outputPath.value || 'output.srt';
+            const o = outputPath.value || (os === 'windows' ? '../output.srt' : 'output.srt');
 
             // Constructing the command
             // Input file is now double-quoted as requested.
@@ -652,7 +681,20 @@ Your-Folder/
         });
 
         osRadios.forEach(radio => {
-            radio.addEventListener('change', generateCommand);
+            radio.addEventListener('change', () => {
+                // Update default output path based on OS
+                const os = radio.value;
+                if (os === 'windows') {
+                    if (outputPath.value === 'output.srt') {
+                        outputPath.value = '../output.srt';
+                    }
+                } else {
+                    if (outputPath.value === '../output.srt') {
+                        outputPath.value = 'output.srt';
+                    }
+                }
+                generateCommand();
+            });
         });
 
         // Initial generation
