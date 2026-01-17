@@ -56,7 +56,7 @@
         .container {
             background-color: var(--card-bg);
             border-radius: 12px;
-            padding: 40px;
+            padding: 25px 40px 40px 40px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 800px;
@@ -67,7 +67,8 @@
 
         h1 {
             text-align: center;
-            margin-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 5px;
             color: var(--accent-color);
             font-weight: 300;
             letter-spacing: 1px;
@@ -75,9 +76,9 @@
 
         p.description {
             text-align: center;
-            color: #aaa;
-            margin-bottom: 40px;
-            font-size: 0.9rem;
+            color: #ccc;
+            margin-bottom: 25px;
+            font-size: 0.96rem;
         }
 
         .form-group {
@@ -133,7 +134,7 @@
         }
 
         .output-section {
-            margin-top: 40px;
+            margin-top: 60px;
             background-color: #000;
             border-radius: 8px;
             padding: 20px;
@@ -190,7 +191,8 @@
         }
 
         .copy-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.985);
+            background-color: #925ef5;
         }
 
         .grid-row {
@@ -232,6 +234,11 @@
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
+        }
+
+        .file-input-button:active {
+            transform: scale(0.995);
+            background-color: #353535;
         }
 
         .file-input-wrapper:hover .file-input-button {
@@ -313,7 +320,7 @@
         .lang-switcher {
             position: absolute;
             top: 15px;
-            left: 20px;
+            right: 20px;
             display: flex;
             gap: 12px;
             font-size: 0.75rem;
@@ -484,7 +491,8 @@
             <div class="collapsible-content">
                 <div id="help-windows">
                     <div class="pt-10" data-i18n="help-setup-win">
-                        Create a <code>models</code> folder relative to your FFmpeg:
+                        Create a <code>models</code> folder relative to your FFmpeg and place the downloaded model file
+                        inside:
                     </div>
                     <pre class="help-pre">
 Your-FFmpeg-Root/
@@ -496,7 +504,8 @@ Your-FFmpeg-Root/
                 </div>
                 <div id="help-mac" class="hidden">
                     <div class="pt-10" data-i18n="help-setup-mac">
-                        Create a <code>models</code> folder in the same folder as <code>ffmpeg</code>:
+                        Create a <code>models</code> folder in the same folder as <code>ffmpeg</code> and place the
+                        downloaded model file inside:
                     </div>
                     <pre class="help-pre">
 Your-Folder/
@@ -504,6 +513,11 @@ Your-Folder/
 └── models/
     ├── ggml-large-v3.bin
     └── ...</pre>
+                </div>
+                <div class="pt-10">
+                    <span data-i18n="help-download">You can download models from:</span><br>
+                    <a href="https://huggingface.co/ggerganov/whisper.cpp/tree/main" target="_blank"
+                        style="color: var(--accent-color); font-size: 0.85rem; word-break: break-all;">https://huggingface.co/ggerganov/whisper.cpp/tree/main</a>
                 </div>
             </div>
         </div>
@@ -578,7 +592,7 @@ Your-Folder/
         const i18n = {
             en: {
                 "title": "Whisper Command Creator",
-                "description": "Generate FFmpeg commands for Whisper functionality effortlessly.",
+                "description": "A handy tool to generate FFmpeg commands for transcribing video and audio files using the built-in Whisper engine.",
                 "label-os": "Operating System",
                 "label-input-path": "Input File Path",
                 "placeholder-input-path": "Paste full path here (e.g. C:\\Videos\\movie.mp4)",
@@ -594,11 +608,12 @@ Your-Folder/
                 "label-output-path": "Output Filename",
                 "output-label": "GENERATED COMMAND",
                 "copy-btn": "Copy to Clipboard",
-                "copied": "Copied!"
+                "copied": "Copied!",
+                "help-download": "You can download models from:"
             },
             ja: {
                 "title": "Whisper コマンド作成ツール",
-                "description": "Whisper機能を使ったFFmpegコマンドを簡単に生成できます。",
+                "description": "FFmpeg内蔵のWhisper機能を利用して、動画や音声ファイルから文字起こしを行うためのコマンドを簡単に生成できるツールです。",
                 "label-os": "オペレーティングシステム",
                 "label-input-path": "入力ファイルのフルパス",
                 "placeholder-input-path": "フルパスを貼り付けてください (例: C:\\Videos\\movie.mp4)",
@@ -607,14 +622,15 @@ Your-Folder/
                 "help-path-mac": "ファイルを右クリックし、<code>Option</code> (Alt) キーを押しながら「'ファイル名'のパス名をコピー」を選択します。",
                 "label-model": "モデル",
                 "help-setup-title": "事前準備",
-                "help-setup-win": "FFmpegと同じディレクトリに <code>models</code> フォルダを作成してください:",
-                "help-setup-mac": "<code>ffmpeg</code>本体と同じフォルダに <code>models</code> フォルダを作成してください:",
+                "help-setup-win": "FFmpegと同じディレクトリに <code>models</code> フォルダを作成し、その中にダウンロードしたモデルファイルを配置してください:",
+                "help-setup-mac": "<code>ffmpeg</code>本体と同じフォルダに <code>models</code> フォルダを作成し、その中にダウンロードしたモデルファイルを配置してください:",
                 "label-transcribe-lang": "文字起こし言語",
                 "label-queue": "キュー (Queue)",
                 "label-output-path": "出力ファイル名",
                 "output-label": "生成されたコマンド",
                 "copy-btn": "クリップボードにコピー",
-                "copied": "コピーしました！"
+                "copied": "コピーしました！",
+                "help-download": "モデルは以下からダウンロードできます:"
             }
         };
 
