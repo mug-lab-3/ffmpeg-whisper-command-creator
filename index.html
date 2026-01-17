@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFmpeg Whisper Command Creator</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #bb86fc;
+            --secondary-color: #03dac6;
+            --input-bg: #2c2c2c;
+            --border-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        p.description {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        select {
+            appearance: none;
+            /* remove default arrow */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bb86fc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 12px auto;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
+        }
+
+        input[type="radio"] {
+            accent-color: var(--accent-color);
+            width: 1.2em;
+            height: 1.2em;
+            cursor: pointer;
+        }
+
+        .output-section {
+            margin-top: 40px;
+            background-color: #000;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .output-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background-color: var(--accent-color);
+            color: #000;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            word-break: break-all;
+            line-height: 1.5;
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #dcdcdc;
+        }
+
+        #commandOutput {
+            display: block;
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .copy-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: #a370f7;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Custom File Input Styling */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .file-input-button {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #aaa;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper:hover .file-input-button {
+            border-color: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        .file-input-icon {
+            margin-left: 10px;
+            color: var(--accent-color);
+            display: flex;
+            /* alignment */
+            align-items: center;
+        }
+
+        .file-input-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+
+        /* Collapsible Styles */
+        .collapsible-header {
+            font-size: 0.85rem;
+            color: #888;
+            background-color: #252525;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background-color: #2a2a2a;
+        }
+
+        .collapsible-content {
+            background-color: #252525;
+            border-radius: 0 0 6px 6px;
+            padding: 0 10px 10px 10px;
+            margin-top: -6px;
+            /* Overlap slightly so it looks connected */
+            border-left: 3px solid var(--accent-color);
+            display: block;
+            /* Default to visible */
+        }
+
+        /* Helper to default visible if requested */
+        .collapsible-content.default-visible {
+            display: block;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+            display: inline-block;
+            font-size: 0.8rem;
+            transform: rotate(0deg);
+            /* Default expanded state */
+        }
+
+        .arrow.expanded {
+            transform: rotate(0deg);
+        }
+
+        /* Language Switcher Corner Style */
+        .lang-switcher {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .lang-switcher label {
+            margin-bottom: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #888;
+            font-weight: normal;
+        }
+
+        .lang-switcher input[type="radio"] {
+            width: 1em;
+            height: 1em;
+            margin-right: 4px;
+        }
+
+        .container {
+            position: relative;
+            /* For absolute lang-switcher */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="lang-switcher">
+            <label>
+                <input type="radio" name="ui-lang" value="en">
+                EN
+            </label>
+            <label>
+                <input type="radio" name="ui-lang" value="ja">
+                日本語
+            </label>
+        </div>
+
+        <h1 data-i18n="title">Whisper Command Creator</h1>
+        <p class="description" data-i18n="description">Generate FFmpeg commands for Whisper functionality effortlessly.
+        </p>
+
+        <div class="form-group">
+            <label data-i18n="label-os">Operating System</label>
+            <div style="display: flex; gap: 20px;">
+                <label style="display: inline-flex; align-items: center; cursor: pointer;">
+                    <input type="radio" name="os" value="windows" checked style="width: auto; margin-right: 8px;">
+                    Windows
+                </label>
+                <label style="display: inline-flex; align-items: center; cursor: pointer;">
+                    <input type="radio" name="os" value="mac" style="width: auto; margin-right: 8px;">
+                    Mac / Linux
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPath" data-i18n="label-input-path">Input File Path</label>
+            <input type="text" id="inputPath" placeholder="Paste full path here (e.g. C:\Videos\movie.mp4)"
+                style="width: 100%;" data-i18n-placeholder="placeholder-input-path">
+
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <strong data-i18n="help-path-title">How to get the full path:</strong>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div id="path-help-windows">
+                    <ul style="margin: 5px 0 0 20px; padding: 10px 0 0 0;">
+                        <li data-i18n="help-path-win">Hold <code>Shift</code> and Right-Click the file, then select
+                            "Copy as path".</li>
+                    </ul>
+                </div>
+                <div id="path-help-mac" style="display: none;">
+                    <ul style="margin: 5px 0 0 20px; padding: 10px 0 0 0;">
+                        <li data-i18n="help-path-mac">Right-Click the file, hold <code>Option</code> (Alt), then select
+                            "Copy 'filename' as Pathname".</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="modelPath" data-i18n="label-model">Model</label>
+            <select id="modelPath">
+                <option value="large-v3">large-v3</option>
+                <option value="large-v3-turbo">large-v3-turbo</option>
+                <option value="medium">medium</option>
+                <option value="small">small</option>
+            </select>
+            <div class="collapsible-header" onclick="toggleCollapse(this)">
+                <strong data-i18n="help-setup-title">Setup Required</strong>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div id="help-windows">
+                    <div style="padding-top: 10px;" data-i18n="help-setup-win">
+                        Create a <code>models</code> folder relative to your FFmpeg:
+                    </div>
+                    <pre
+                        style="background: #121212; padding: 8px; border-radius: 4px; margin: 5px 0 0 0; font-family: monospace; color: #a370f7; line-height: 1.6;">
+Your-FFmpeg-Root/
+├── bin/
+│   └── ffmpeg.exe  <-- Run this
+└── models/
+    ├── ggml-large-v3.bin
+    └── ...</pre>
+                </div>
+                <div id="help-mac" style="display: none;">
+                    <div style="padding-top: 10px;" data-i18n="help-setup-mac">
+                        Create a <code>models</code> folder in the same folder as <code>ffmpeg</code>:
+                    </div>
+                    <pre
+                        style="background: #121212; padding: 8px; border-radius: 4px; margin: 5px 0 0 0; font-family: monospace; color: #a370f7; line-height: 1.6;">
+Your-Folder/
+├── ffmpeg       <-- Run this
+└── models/
+    ├── ggml-large-v3.bin
+    └── ...</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="form-group">
+                <label for="language" data-i18n="label-transcribe-lang">Language</label>
+                <select id="language">
+                    <option value="auto">auto</option>
+                    <option value="ja">Japanese (ja)</option>
+                    <option value="en">English (en)</option>
+                    <option value="zh">Chinese (zh)</option>
+                    <option value="de">German (de)</option>
+                    <option value="es">Spanish (es)</option>
+                    <option value="ru">Russian (ru)</option>
+                    <option value="ko">Korean (ko)</option>
+                    <option value="fr">French (fr)</option>
+                    <option value="pt">Portuguese (pt)</option>
+                    <option value="tr">Turkish (tr)</option>
+                    <option value="pl">Polish (pl)</option>
+                    <option value="ca">Catalan (ca)</option>
+                    <option value="nl">Dutch (nl)</option>
+                    <option value="ar">Arabic (ar)</option>
+                    <option value="sv">Swedish (sv)</option>
+                    <option value="it">Italian (it)</option>
+                    <option value="id">Indonesian (id)</option>
+                    <option value="hi">Hindi (hi)</option>
+                    <option value="fi">Finnish (fi)</option>
+                    <option value="vi">Vietnamese (vi)</option>
+                    <option value="uk">Ukrainian (uk)</option>
+                    <option value="th">Thai (th)</option>
+                    <option value="cs">Czech (cs)</option>
+                    <option value="da">Danish (da)</option>
+                    <option value="hu">Hungarian (hu)</option>
+                    <option value="no">Norwegian (no)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="queue" data-i18n="label-queue">Queue</label>
+                <input type="number" id="queue" value="3" min="1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="outputPath" data-i18n="label-output-path">Output Filename</label>
+            <input type="text" id="outputPath" value="output.srt" placeholder="e.g., subtitle.srt">
+        </div>
+
+        <div class="output-section">
+            <div class="output-label" data-i18n="output-label">GENERATED COMMAND</div>
+            <code id="commandOutput"></code>
+        </div>
+
+        <button id="copyBtn" class="copy-btn" data-i18n="copy-btn">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        const inputPath = document.getElementById('inputPath');
+        const modelPath = document.getElementById('modelPath');
+        const language = document.getElementById('language');
+        const queue = document.getElementById('queue');
+        const outputPath = document.getElementById('outputPath');
+        const commandOutput = document.getElementById('commandOutput');
+        const copyBtn = document.getElementById('copyBtn');
+        const osRadios = document.getElementsByName('os');
+        const helpWindows = document.getElementById('help-windows');
+        const helpMac = document.getElementById('help-mac');
+        const pathHelpWindows = document.getElementById('path-help-windows');
+        const pathHelpMac = document.getElementById('path-help-mac');
+        const uiLangRadios = document.getElementsByName('ui-lang');
+
+        const i18n = {
+            en: {
+                "title": "Whisper Command Creator",
+                "description": "Generate FFmpeg commands for Whisper functionality effortlessly.",
+                "label-os": "Operating System",
+                "label-input-path": "Input File Path",
+                "placeholder-input-path": "Paste full path here (e.g. C:\\Videos\\movie.mp4)",
+                "help-path-title": "How to get the full path:",
+                "help-path-win": "Hold <code>Shift</code> and Right-Click the file, then select \"Copy as path\".",
+                "help-path-mac": "Right-Click the file, hold <code>Option</code> (Alt), then select \"Copy 'filename' as Pathname\".",
+                "label-model": "Model",
+                "help-setup-title": "Setup Required",
+                "help-setup-win": "Create a <code>models</code> folder relative to your FFmpeg:",
+                "help-setup-mac": "Create a <code>models</code> folder in the same folder as <code>ffmpeg</code>:",
+                "label-transcribe-lang": "Language",
+                "label-queue": "Queue",
+                "label-output-path": "Output Filename",
+                "output-label": "GENERATED COMMAND",
+                "copy-btn": "Copy to Clipboard",
+                "copied": "Copied!"
+            },
+            ja: {
+                "title": "Whisper コマンド作成ツール",
+                "description": "Whisper機能を使ったFFmpegコマンドを簡単に生成できます。",
+                "label-os": "オペレーティングシステム",
+                "label-input-path": "入力ファイルのフルパス",
+                "placeholder-input-path": "フルパスを貼り付けてください (例: C:\\Videos\\movie.mp4)",
+                "help-path-title": "フルパスの取得方法:",
+                "help-path-win": "<code>Shift</code>キーを押しながらファイルを右クリックし、「パスとしてコピー」を選択します。",
+                "help-path-mac": "ファイルを右クリックし、<code>Option</code> (Alt) キーを押しながら「'ファイル名'のパス名をコピー」を選択します。",
+                "label-model": "モデル",
+                "help-setup-title": "事前準備",
+                "help-setup-win": "FFmpegと同じディレクトリに <code>models</code> フォルダを作成してください:",
+                "help-setup-mac": "<code>ffmpeg</code>本体と同じフォルダに <code>models</code> フォルダを作成してください:",
+                "label-transcribe-lang": "文字起こし言語",
+                "label-queue": "キュー (Queue)",
+                "label-output-path": "出力ファイル名",
+                "output-label": "生成されたコマンド",
+                "copy-btn": "クリップボードにコピー",
+                "copied": "コピーしました！"
+            }
+        };
+
+        function updateUI(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.innerHTML = i18n[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[lang][key]) {
+                    el.placeholder = i18n[lang][key];
+                }
+            });
+            // Update page title
+            document.title = i18n[lang]["title"];
+        }
+
+        function setLanguage(lang) {
+            document.querySelector(`input[name="ui-lang"][value="${lang}"]`).checked = true;
+            updateUI(lang);
+        }
+
+        // Initial language detection
+        const browserLang = navigator.language.startsWith('ja') ? 'ja' : 'en';
+        setLanguage(browserLang);
+
+        uiLangRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                updateUI(e.target.value);
+            });
+        });
+
+        function toggleCollapse(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.arrow');
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                arrow.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        // Initial OS detection
+        if (navigator.userAgent.toLowerCase().includes('mac')) {
+            document.querySelector('input[name="os"][value="mac"]').checked = true;
+            toggleHelp('mac');
+        }
+
+        function toggleHelp(os) {
+            if (os === 'windows') {
+                helpWindows.style.display = 'block';
+                helpMac.style.display = 'none';
+                if (pathHelpWindows) pathHelpWindows.style.display = 'block';
+                if (pathHelpMac) pathHelpMac.style.display = 'none';
+            } else {
+                helpWindows.style.display = 'none';
+                helpMac.style.display = 'block';
+                if (pathHelpWindows) pathHelpWindows.style.display = 'none';
+                if (pathHelpMac) pathHelpMac.style.display = 'block';
+            }
+        }
+
+        function generateCommand() {
+            let i = inputPath.value.trim().replace(/^"|"$/g, '') || 'input.mp4';
+
+            const os = document.querySelector('input[name="os"]:checked').value;
+            toggleHelp(os);
+
+            const modelName = modelPath.value || 'large-v3';
+            // Adjusted path logic based on OS
+            const m = (os === 'windows') ? `../models/ggml-${modelName}.bin` : `models/ggml-${modelName}.bin`;
+
+            const l = language.value || 'en';
+            const q = queue.value || '3';
+            const o = outputPath.value || 'output.srt';
+
+            // Constructing the command
+            // Input file is now double-quoted as requested.
+            const strictCommand = `./ffmpeg -i "${i}" -vn -af
+    "whisper=model=${m}:language=${l}:queue=${q}:destination=${o}:format=srt" -f null -`;
+
+            commandOutput.textContent = strictCommand;
+        }
+
+        // Add event listeners
+        [inputPath, modelPath, language, queue, outputPath].forEach(el => {
+            el.addEventListener('input', generateCommand);
+        });
+
+        osRadios.forEach(radio => {
+            radio.addEventListener('change', generateCommand);
+        });
+
+        // Initial generation
+        generateCommand();
+
+        // Copy functionality
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(commandOutput.textContent).then(() => {
+                const lang = document.querySelector('input[name="ui-lang"]:checked').value;
+                const originalText = i18n[lang]["copy-btn"];
+                copyBtn.textContent = i18n[lang]["copied"];
+                copyBtn.style.backgroundColor = '#03dac6';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.backgroundColor = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard.');
+            });
+        });
+    </script>
+
+</body>
+
+</html>
