@@ -37,6 +37,8 @@
             width: 100%;
             max-width: 800px;
             border: 1px solid var(--border-color);
+            position: relative;
+            /* For absolute items inside */
         }
 
         h1 {
@@ -249,6 +251,11 @@
             user-select: none;
         }
 
+        .collapsible-header.expanded {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
         .collapsible-header:hover {
             background-color: #2a2a2a;
         }
@@ -257,11 +264,9 @@
             background-color: #252525;
             border-radius: 0 0 6px 6px;
             padding: 0 10px 10px 10px;
-            margin-top: -6px;
-            /* Overlap slightly so it looks connected */
+            margin-top: 0;
             border-left: 3px solid var(--accent-color);
             display: block;
-            /* Default to visible */
         }
 
         /* Helper to default visible if requested */
@@ -274,11 +279,10 @@
             display: inline-block;
             font-size: 0.8rem;
             transform: rotate(0deg);
-            /* Default expanded state */
         }
 
-        .arrow.expanded {
-            transform: rotate(0deg);
+        .arrow.collapsed {
+            transform: rotate(-90deg);
         }
 
         /* Language Switcher Corner Style */
@@ -307,9 +311,50 @@
             margin-right: 4px;
         }
 
-        .container {
-            position: relative;
-            /* For absolute lang-switcher */
+
+
+        /* Utility classes to remove inline styles */
+        .flex-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .flex-center {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-spacing {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .help-list {
+            margin: 0 0 0 20px;
+            padding: 10px 0 0 0;
+        }
+
+        .help-pre {
+            background: #121212;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0 0 0;
+            font-family: monospace;
+            color: var(--accent-color);
+            line-height: 1.6;
+        }
+
+        .pt-10 {
+            padding-top: 10px;
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -334,13 +379,13 @@
 
         <div class="form-group">
             <label data-i18n="label-os">Operating System</label>
-            <div style="display: flex; gap: 20px;">
-                <label style="display: inline-flex; align-items: center; cursor: pointer;">
-                    <input type="radio" name="os" value="windows" checked style="width: auto; margin-right: 8px;">
+            <div class="flex-row">
+                <label class="flex-center">
+                    <input type="radio" name="os" value="windows" checked class="radio-spacing">
                     Windows
                 </label>
-                <label style="display: inline-flex; align-items: center; cursor: pointer;">
-                    <input type="radio" name="os" value="mac" style="width: auto; margin-right: 8px;">
+                <label class="flex-center">
+                    <input type="radio" name="os" value="mac" class="radio-spacing">
                     Mac / Linux
                 </label>
             </div>
@@ -349,21 +394,21 @@
         <div class="form-group">
             <label for="inputPath" data-i18n="label-input-path">Input File Path</label>
             <input type="text" id="inputPath" placeholder="Paste full path here (e.g. C:\Videos\movie.mp4)"
-                style="width: 100%;" data-i18n-placeholder="placeholder-input-path">
+                class="w-full" data-i18n-placeholder="placeholder-input-path">
 
-            <div class="collapsible-header" onclick="toggleCollapse(this)">
+            <div class="collapsible-header expanded" onclick="toggleCollapse(this)">
                 <strong data-i18n="help-path-title">How to get the full path:</strong>
                 <span class="arrow">▼</span>
             </div>
             <div class="collapsible-content">
                 <div id="path-help-windows">
-                    <ul style="margin: 5px 0 0 20px; padding: 10px 0 0 0;">
+                    <ul class="help-list">
                         <li data-i18n="help-path-win">Hold <code>Shift</code> and Right-Click the file, then select
                             "Copy as path".</li>
                     </ul>
                 </div>
-                <div id="path-help-mac" style="display: none;">
-                    <ul style="margin: 5px 0 0 20px; padding: 10px 0 0 0;">
+                <div id="path-help-mac" class="hidden">
+                    <ul class="help-list">
                         <li data-i18n="help-path-mac">Right-Click the file, hold <code>Option</code> (Alt), then select
                             "Copy 'filename' as Pathname".</li>
                     </ul>
@@ -379,17 +424,16 @@
                 <option value="medium">medium</option>
                 <option value="small">small</option>
             </select>
-            <div class="collapsible-header" onclick="toggleCollapse(this)">
+            <div class="collapsible-header expanded" onclick="toggleCollapse(this)">
                 <strong data-i18n="help-setup-title">Setup Required</strong>
                 <span class="arrow">▼</span>
             </div>
             <div class="collapsible-content">
                 <div id="help-windows">
-                    <div style="padding-top: 10px;" data-i18n="help-setup-win">
+                    <div class="pt-10" data-i18n="help-setup-win">
                         Create a <code>models</code> folder relative to your FFmpeg:
                     </div>
-                    <pre
-                        style="background: #121212; padding: 8px; border-radius: 4px; margin: 5px 0 0 0; font-family: monospace; color: #a370f7; line-height: 1.6;">
+                    <pre class="help-pre">
 Your-FFmpeg-Root/
 ├── bin/
 │   └── ffmpeg.exe  <-- Run this
@@ -397,12 +441,11 @@ Your-FFmpeg-Root/
     ├── ggml-large-v3.bin
     └── ...</pre>
                 </div>
-                <div id="help-mac" style="display: none;">
-                    <div style="padding-top: 10px;" data-i18n="help-setup-mac">
+                <div id="help-mac" class="hidden">
+                    <div class="pt-10" data-i18n="help-setup-mac">
                         Create a <code>models</code> folder in the same folder as <code>ffmpeg</code>:
                     </div>
-                    <pre
-                        style="background: #121212; padding: 8px; border-radius: 4px; margin: 5px 0 0 0; font-family: monospace; color: #a370f7; line-height: 1.6;">
+                    <pre class="help-pre">
 Your-Folder/
 ├── ffmpeg       <-- Run this
 └── models/
@@ -507,7 +550,7 @@ Your-Folder/
                 "label-input-path": "入力ファイルのフルパス",
                 "placeholder-input-path": "フルパスを貼り付けてください (例: C:\\Videos\\movie.mp4)",
                 "help-path-title": "フルパスの取得方法:",
-                "help-path-win": "<code>Shift</code>キーを押しながらファイルを右クリックし、「パスとしてコピー」を選択します。",
+                "help-path-win": "<code>Shift</code>キーを押しながらファイルを右クリックし、「パスのコピー」を選択します。",
                 "help-path-mac": "ファイルを右クリックし、<code>Option</code> (Alt) キーを押しながら「'ファイル名'のパス名をコピー」を選択します。",
                 "label-model": "モデル",
                 "help-setup-title": "事前準備",
@@ -557,14 +600,9 @@ Your-Folder/
         function toggleCollapse(header) {
             const content = header.nextElementSibling;
             const arrow = header.querySelector('.arrow');
-
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                content.style.display = 'none';
-                arrow.style.transform = 'rotate(-90deg)';
-            }
+            content.classList.toggle('hidden');
+            header.classList.toggle('expanded');
+            arrow.classList.toggle('collapsed');
         }
 
         // Initial OS detection
@@ -575,15 +613,15 @@ Your-Folder/
 
         function toggleHelp(os) {
             if (os === 'windows') {
-                helpWindows.style.display = 'block';
-                helpMac.style.display = 'none';
-                if (pathHelpWindows) pathHelpWindows.style.display = 'block';
-                if (pathHelpMac) pathHelpMac.style.display = 'none';
+                helpWindows.classList.remove('hidden');
+                helpMac.classList.add('hidden');
+                if (pathHelpWindows) pathHelpWindows.classList.remove('hidden');
+                if (pathHelpMac) pathHelpMac.classList.add('hidden');
             } else {
-                helpWindows.style.display = 'none';
-                helpMac.style.display = 'block';
-                if (pathHelpWindows) pathHelpWindows.style.display = 'none';
-                if (pathHelpMac) pathHelpMac.style.display = 'block';
+                helpWindows.classList.add('hidden');
+                helpMac.classList.remove('hidden');
+                if (pathHelpWindows) pathHelpWindows.classList.add('hidden');
+                if (pathHelpMac) pathHelpMac.classList.remove('hidden');
             }
         }
 
@@ -627,7 +665,7 @@ Your-Folder/
                 const lang = document.querySelector('input[name="ui-lang"]:checked').value;
                 const originalText = i18n[lang]["copy-btn"];
                 copyBtn.textContent = i18n[lang]["copied"];
-                copyBtn.style.backgroundColor = '#03dac6';
+                copyBtn.style.backgroundColor = 'var(--secondary-color)';
                 setTimeout(() => {
                     copyBtn.textContent = originalText;
                     copyBtn.style.backgroundColor = '';
